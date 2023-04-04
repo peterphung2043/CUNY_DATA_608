@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "cuny-data-608"
+version = "0.1.0"
+description = ""
+authors = ["peterphung2043 <pphung000@citymail.cuny.edu>"]
+readme = "README.md"
+packages = [{include = "cuny_data_608"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+datashader = "^0.14.4"
+pyproj = "^3.4.1"
+plotly = "^5.13.0"
+colorlover = "^0.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

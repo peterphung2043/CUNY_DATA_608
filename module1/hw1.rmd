@@ -1,0 +1,128 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  html_notebook: default
+---
+```{r setup, echo = FALSE, results = 'hide', message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, class.source = "codechunk")
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+```
+
+**Principles of Data Visualization and Introduction to ggplot2**
+
+I have provided you with data about the 5,000 fastest growing companies in the US, as compiled by Inc. magazine. lets read this in:
+
+```{r}
+inc <- read.csv("https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module1/Data/inc5000_data.csv", header= TRUE)
+```
+
+And lets preview this data:
+
+```{r}
+head(inc)
+```
+
+```{r}
+summary(inc)
+```
+
+Think a bit on what these summaries mean. Use the space below to add some more relevant non-visual exploratory information you think helps you understand this data:
+
+### Additional Non-Visual Exploratory Information
+
+The `Industry` variable looks like that it could converted into a factor. For many of these companies, many of the industries probably overlap with one another, so it would be interesting to see how many of these 5,000 companies share the same industry. We can also determine the state that holds the greatest number of companies by converting the "State" variable to a factor as well.
+
+```{r}
+inc$Industry <- as.factor(inc$Industry)
+inc$State <- as.factor(inc$State)
+summary(inc)
+```
+The output above shows us that out of 5,000 companies, the industry with the most companies is IT services, and California holds the greater number of companies within the dataset.
+
+The summary output also reveals that 12 of these companies have an employee count of NA, so it would also be interesting to see which of the 5,000 companies have an employee count of NA. We can also sort by revenue as well.
+
+```{r}
+inc %>% filter(is.na(Employees)) %>% arrange(desc(Revenue))
+```
+The output above shows us that Heartland Business Systems, which has no employee count, has a revenue amount of 156,300,000. An interesting thing to point out is that the output above reveals that the company with the least amount of revenue and an employee count of NA has a growth rate that is an order of magnitude higher than the rest of the growth rates.
+
+## Question 1
+
+Create a graph that shows the distribution of companies in the dataset by State (ie how many are in each state). There are a lot of States, so consider which axis you should use. This visualization is ultimately going to be consumed on a 'portrait' oriented screen (ie taller than wide), which should further guide your layout choices.
+
+```{r, fig.height = 8, fig.width = 7}
+ggplot(inc, aes(x = fct_infreq(State))) +
+  geom_bar() +
+  coord_flip() + 
+  labs(x = "Count", y = "State")
+```
+
+## Quesiton 2
+
+Lets dig in on the state with the 3rd most companies in the data set. Imagine you work for the state and are interested in how many people are employed by companies in different industries. Create a plot that shows the average and/or median employment by industry for companies in this state (only use cases with full data, use R's `complete.cases()` function.) In addition to this, your graph should show how variable the ranges are, and you should deal with outliers.
+
+### Question 2 Answer
+
+The summary output that I produced in the very first question reveals that NY is the state with the 3rd most companies in the dataset. Box and whisker plots should be sufficient in showing the variability in the ranges and the mean as well.
+
+```{r, fig.height = 7, fig.width = 7}
+ny_data <- inc %>% 
+  filter(State == "NY" & complete.cases(.)) %>%
+  select(Employees, Industry)
+
+ggplot(data = ny_data, mapping = aes(x = Industry, y = Employees)) +
+  coord_flip() +
+  geom_boxplot()
+```
+
+The output above shows us there are significant outliers for "Consumer Products & Services" and for "Business Products and Servies". The outliers are so significant that the boxplots themselves are extremely small. Therefore, we are going to remove outliers that are 1.5 times the interquartile range greater than the 3rd quantile or 1.5 times the interquartile range less than the first quantile [1].
+
+```{r, fig.height = 7, fig.width = 7}
+ny_data_outliers_removed <- ny_data %>%
+  group_by(Industry) %>%
+  subset(Employees > (quantile(Employees, 0.25) - 1.5*IQR(Employees)) & Employees < quantile(Employees, 0.75) + 1.5*IQR(Employees))
+
+ggplot(data = ny_data_outliers_removed, mapping = aes(x = Industry, y = Employees)) +
+  coord_flip() +
+  geom_boxplot() +
+  ggtitle("Distributions of Number of Employees for Industries in NY")
+```
+
+## Question 3
+
+Now imagine you work for an investor and want to see which industries generate the most revenue per employee. Create a chart that makes this information clear. Once again, the distribution per industry should be shown.
+
+```{r, fig.height = 7, fig.width = 7}
+
+inc$Revenue_Per_Employee <- round(inc$Revenue/inc$Employees, digits = 2)
+
+inc_revenue_per_employee_outliers_removed <- inc %>%
+  drop_na(Revenue_Per_Employee) %>%
+  group_by(Industry) %>%
+  subset(Revenue_Per_Employee > (quantile(Revenue_Per_Employee, 0.25) - 1.5*IQR(Revenue_Per_Employee)) & Revenue_Per_Employee < quantile(Revenue_Per_Employee, 0.75) + 1.5*IQR(Revenue_Per_Employee))
+
+group_ordered <- with(inc_revenue_per_employee_outliers_removed,                       # Order boxes by median
+                      reorder(Industry,
+                              Revenue_Per_Employee,
+                              median))
+
+inc_revenue_per_employee_outliers_removed$Industry <- factor(inc_revenue_per_employee_outliers_removed$Industry,
+                                                             levels = levels(group_ordered))
+ggplot(data = inc_revenue_per_employee_outliers_removed, mapping = aes(x = Industry, y = Revenue_Per_Employee)) +
+  coord_flip() +
+  geom_boxplot() +
+  ggtitle("Distributions for Revenue Per Employee by Industry \nfor 5000 Fastest Growing Companies in the U.S.")
+```
+
+By sorting by the median[2], we can see in the output above that "Computer Hardware' generates the most revenue per employee.
+
+## References
+
+[1] https://www.statology.org/remove-outliers-r/
+
+[2] https://statisticsglobe.com/sort-boxplot-median-r
