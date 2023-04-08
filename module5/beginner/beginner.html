@@ -1,0 +1,59 @@
+<html>
+
+<body>
+
+    <script type="text/javascript">
+
+        // Javascript Function for Word Reversal
+
+        function reverseWords(str) {
+            let reverseWordArr = str.split(" ").map(word => word.split("").reverse().join(""));
+            return reverseWordArr.join(" ");
+        };
+        function calc() {
+            var t = document.getElementById("reversed_word");
+            t.innerHTML = reverseWords(document.getElementById('string').value);
+        }
+
+        function generateTable(num) {
+            let result = "<table>"
+            let k = 1
+            for (let i = 1; i < 6; i++) {
+                result = result.concat("", "<tr>")
+                for (let j = 1; j < 5; j++) {
+                    result = result.concat("", "<td>" + (num * k) + "</td>")
+                    k = k + 1
+                }
+                result = result.concat("", "</tr>")
+            }
+            result = result.concat("", "</table>")
+            return result
+        }
+        function tableToHTML() {
+            var generated_table = document.getElementById("generated_table")
+            generated_table.innerHTML = generateTable(document.getElementById('number').value);
+        }
+
+    </script>
+
+    <p>
+    <form>
+        <input id="string" type="str" size="10">
+        <input type="button" value="reverse" onClick="calc();">
+    </form>
+    </p>
+
+    <div id="reversed_word"></div>
+
+    <p>
+    <form>
+        <input id="number" type="num" size="10">
+        <input type="button" value="generateTable" onClick="tableToHTML();">
+    </form>
+    </p>
+
+    <div id="generated_table"></div>
+
+</body>
+
+</html>
