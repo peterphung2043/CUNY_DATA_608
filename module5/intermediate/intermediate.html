@@ -52,14 +52,14 @@
         }
 
 
-        function findName() {
+        function findHeightWeight() {
             // Selecting the input element and get its value 
             d3.csv('https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv', function (data) {
-                let height = document.getElementById("height").value;
-                let weight = document.getElementById("weight").value;
+                let name = document.getElementById("name").value;
                 for (var i = 0; i < data.length; i++) {
-                    if (data[i].Height == height & data[i].Weight == weight) {
-                        document.getElementById("generated_name").innerHTML = data[i].Name
+                    if (data[i].Name.toLowerCase() == name.toLowerCase()) {
+                        document.getElementById("generated_height").innerHTML = data[i].Height
+                        document.getElementById("generated_weight").innerHTML = data[i].Weight
                     }
                 }
             })
@@ -69,13 +69,13 @@
 
     <p>
     <form>
-        <input id="height" type="str" size="10" placeholder="Enter height here">
-        <input id="weight" type="str" size="10" placeholder="Enter weight here">
-        <input type="button" value="Pull up Name" onClick="findName();">
+        <input id="name" type="str" size="10" placeholder="Enter name here">
+        <input type="button" value="Pull up Height and Weight" onClick="findHeightWeight();">
     </form>
     </p>
 
-    <div id="generated_name"></div>
+    Height: <div id="generated_height"></div>
+    Weight: <div id="generated_weight"></div>
 
     <p>
     <form>
