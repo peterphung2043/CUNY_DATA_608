@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<html>
+
+<head>
+    <title>Intermediate Assignment</title>
+</head>
+
+
+<h1>Intermediate Assignment</h1>
+
+<body>
+
+    <head>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <link rel='stylesheet' href='style.css'>
+        <style>
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+
+            th {
+                text-align: left;
+            }
+        </style>
+    </head>
+
+    <script type="text/javascript">
+
+        function importCSVdata() {
+            d3.csv('https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv', function (data) {
+                let result = "<table>"
+                result = result.concat("", "<tr>")
+                result = result.concat("", "<th>Name</th>")
+                result = result.concat("", "<th>Height</th>")
+                result = result.concat("", "<th>Weight</th>")
+                result = result.concat("", "</tr>")
+                for (var i = 0; i < data.length; i++) {
+                    result = result.concat("", "<tr>")
+                    result = result.concat("", "<td>" + data[i].Name + "</td>");
+                    result = result.concat("", "<td>" + data[i].Height + "</td>");
+                    result = result.concat("", "<td>" + data[i].Weight + "</td>");
+                    result = result.concat("", "</tr>")
+                }
+                result = result.concat("", "</table>")
+                document.getElementById("generated_table").innerHTML = result
+            })
+
+        }
+
+
+        function findName() {
+            // Selecting the input element and get its value 
+            d3.csv('https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv', function (data) {
+                let height = document.getElementById("height").value;
+                let weight = document.getElementById("weight").value;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].Height == height & data[i].Weight == weight) {
+                        document.getElementById("generated_name").innerHTML = data[i].Name
+                    }
+                }
+            })
+        }
+
+    </script>
+
+    <p>
+    <form>
+        <input id="height" type="str" size="10" placeholder="Enter height here">
+        <input id="weight" type="str" size="10" placeholder="Enter weight here">
+        <input type="button" value="Pull up Name" onClick="findName();">
+    </form>
+    </p>
+
+    <div id="generated_name"></div>
+
+    <p>
+    <form>
+        <input type="button" value="Generate Table" onClick="importCSVdata();">
+    </form>
+    </p>
+
+    <div id="generated_table"></div>
+
+</body>
+
+</html>
