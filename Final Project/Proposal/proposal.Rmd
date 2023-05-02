@@ -1,0 +1,41 @@
+---
+title: "DATA 608 - Final Project Proposal"
+output:
+  html_document:
+    df_print: paged
+author: "Peter Phung"
+---
+
+```{r setup, include=FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, comment = NA)
+library(dplyr)
+```
+
+# Links
+
+World Meat Consumption: <https://data.oecd.org/agroutput/meat-consumption.htm>
+
+World GDP per Capita by year: [https://en.wikipedia.org/wiki/List_of_countries_by_past_and_projected_GDP\_(nominal)\_per_capita](https://en.wikipedia.org/wiki/List_of_countries_by_past_and_projected_GDP_(nominal)_per_capita){.uri}
+
+# Reasoning and Explanation
+
+The BBC points out that global meat consumption has [increased rapidly over the last 50 years](https://www.bbc.com/news/health-47057341). The article states that the more richer the country, the greater the meat consumption. If we were to identify trends and patterns in meat consumption that are associated with changes in GDP in the data (which we collect from the Wikipedia link above), then we can provide evidence to the idea that GDP growth does indeed influcence meat consumption. [Meat production has a large environmental impact](https://www.greenpeace.org.uk/news/why-meat-is-bad-for-the-environment/), which includes deforestation to build industrial meat farms, billions of tons of carbon dioxide being released into the atmosphere, feed sourcing, and manure processing, to name a few. Therefore, countries that consume the most amount of meat should do their part to reduce the environmental impact of meat consumption.
+
+[The first dataset from OECD](https://data.oecd.org/agroutput/meat-consumption.htm) that I have provided provides the following:
+
+```{r}
+world_meat_consumption <- read.csv('world_meat_consumption.csv') %>%
+  mutate(
+    LOCATION <- as.factor(LOCATION),
+    INDICATOR <- as.factor(INDICATOR),
+    SUBJECT <- as.factor(SUBJECT),
+    MEASURE <- as.factor(MEASURE),
+    FREQUENCY <- as.factor(FREQUENCY)
+  )
+
+summary(world_meat_consumption)
+```
+
+So depending on the animal type that is being consumed (the `SUBJECT` variable in the dataset above), we can determine which animals are being consumed the most in a country, and which aninals are being consumed the least per country, by year, and we can use the GDP to gauge the how the meat eating consumption changes through this variable.
+
+I want to create a Dash app in Python using mainly pandas and Plotly (and whatever else miscellaneous packages I need for data processing) which allows you select by country, and then either select by meat type OR select all of the meat types all at once, and then plots the `KG_CAP` or `THND_TONNE` for that particular country on one layer, along with the plotting GDP per Capita by year on another layer. This is to determine if the GDP has influence on meat consumption. This is also to determine which countries have very high levels of meat consumption per capita, as we want to mitigate the environmental effects of meat consumption as mentioned earlier. It would probably be advantageous to look at the countries with the top 10 highest GDPs and the countries with the top 10 lowest GDPs as well. Maybe have the ability on the Dash app to plot two countries GDPs and their meat consumptions for comparison purposes.
