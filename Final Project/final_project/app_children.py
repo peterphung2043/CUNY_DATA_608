@@ -1,21 +1,43 @@
 from dash import html, dcc
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
-from final_project.dropdowns import generate_dropdowns
+from dropdowns import generate_dropdowns
+from typing import Any
 
-def generate_children(subject_array, country_dict, year_dict):
+def generate_children(subject_list: list[str], 
+                      country_list: list[dict[str, str]], 
+                      year_list: list[dict[str, str]]
+                      ) -> list[Any]:
+    """Generates the overall Dash app layout stored in the `children` variable in `app.layout`.
+
+    Args:
+        subject_list (list[str]): 
+            The different meat types stored in a list.
+        country_list (list[dict[str, str]]): 
+            The different countries to select from stored in a list of dicts.
+        year_list (list[dict[str, str]]): 
+            The different years to select from stored in a list of dicts.
+
+    Returns:
+        list[Any]:
+            The overall schema of the app.
+    """
+    
+    
     meat_type_dropdown, country_dropdown, year_dropdown = generate_dropdowns(
-        subject_array, 
-        country_dict, 
-        year_dict
+        subject_list, 
+        country_list, 
+        year_list
         )
+    
     children=[
         html.Div(
             children = [
                 html.H1(children='GDP and Meat Consumption Per Capita Dash App',
                         className = "header-title",
                         style = {"text-align": "center",
-                                    "fontSize": 40}),
+                                    "fontSize": 40,
+                                    "color": "red"}),
                 html.P(
                     children = (
                         "Exploration of GDP Per Capita collected from The World Bank"
@@ -23,7 +45,8 @@ def generate_children(subject_array, country_dict, year_dict):
                         " Peter Phung."
                     ),
                     className = "header-description",
-                    style = {"fontSize": 20}
+                    style = {"fontSize": 20,
+                             "text-align": "center"}
                 ),
                 html.Hr()
             ],

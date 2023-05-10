@@ -1,10 +1,12 @@
 from dash import Dash, html
 from dash.dependencies import Input, Output
-from app_children import children
-import final_project.plotting as plotting
+import plotting as plotting
 from meat_and_gdp_data import generate_meat_and_gdp_df
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
+from numpy import sort
+from app_children import generate_children
+
 
 meat_and_gdp_df = generate_meat_and_gdp_df()
 # Array consisting of different meat types
@@ -18,19 +20,14 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.title = "GDP and Meat Consumption Per Capita Dash App"
 
-[
-{'label': x, 'value': x} for x in sort(df['Country'].unique())
-]
 
-[
-{'label': x, 'value': x} for x in sort(df['Year'].unique())
-]
-
-subject_array = df['SUBJECT'].unique().tolist()
-subject_array.append('ALL')
+country_list = [{'label': x, 'value': x} for x in sort(meat_and_gdp_df['Country'].unique())]
+year_list = [{'label': x, 'value': x} for x in sort(meat_and_gdp_df['Year'].unique())]
+subject_list = meat_and_gdp_df['SUBJECT'].unique().tolist()
+subject_list.append('ALL')
 
 app.layout = html.Div(
-    children
+    children = generate_children(subject_list, country_list, year_list)
 )
 
 @app.callback([Output('ts_fig', 'figure'),

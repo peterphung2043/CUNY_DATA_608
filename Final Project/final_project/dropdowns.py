@@ -1,18 +1,33 @@
 from dash import dcc, html
-from numpy import sort
 from pandas import DataFrame
 
 def generate_dropdowns(
-        subject_array: list[str], 
-        country_dict: dict[str, str], 
-        year_dict: dict[str, str]
+        subject_list: list[str], 
+        country_list: list[dict[str, str]], 
+        year_list: list[dict[str, str]],
         ) -> list[html.Div]:
+    """Generates a list of `html.Div` objects that act as dropdowns for
+    the Dash app.
+
+    Args:
+        subject_list (list[str]): 
+            The different meat types stored in a list.
+        country_list (list[dict[str, str]]): 
+            The different countries to select from stored in a list of dicts.
+        year_list (list[dict[str, str]]): 
+            The different years to select from stored in a list of dicts.
+
+    Returns:
+        list[html.Div]: 
+            Each element represents a dropdown that is displayed on
+            the Dash app.
+    """
 
     meat_type_dropdown = html.Div(
                 [
                     "Select Meat Type For Time Series Figure Below:",
                     dcc.RadioItems(
-                    options=subject_array, 
+                    options=subject_list, 
                     value='BEEF', 
                     id='subject_selection'), 
                 ],
@@ -25,9 +40,7 @@ def generate_dropdowns(
                 "Select Country For Time Series and Correlation Figure Below:",
                 dcc.Dropdown(
                 id='country_selection', 
-                options=[
-                {'label': x, 'value': x} for x in sort(df['Country'].unique())
-                ],
+                options=country_list,
                 value = 'Australia'),
             ],
             style={"width": 250,
@@ -39,9 +52,7 @@ def generate_dropdowns(
                 "Select Year For Bar Plots Below:",
                 dcc.Dropdown(
                 id='year_selection', 
-                options=[
-                {'label': x, 'value': x} for x in sort(df['Year'].unique())
-                ],
+                options=year_list,
                 value = '2021'
                 ),
             ],
