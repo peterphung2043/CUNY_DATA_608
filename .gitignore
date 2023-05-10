@@ -2,3 +2,4 @@
 *.ipynb_checkpoints
 .Rproj.user
 *.Rproj
+*.python-version
