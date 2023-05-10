@@ -20,14 +20,10 @@ def add_figure_layers_by_subject(fig: go.Figure, df: DataFrame) -> go.Figure:
             go.Scattergl(
                 x = subject_df['Year'],
                 y = subject_df['Value'],
-                name = 'KG {} Consumed Per Capita'.format(meat_type)
+                name = '{}'.format(meat_type)
             ),
             secondary_y = False
         )
-
-    fig.update_layout(
-        plot_bgcolor = "white"
-    )
     
     return fig
 
@@ -166,6 +162,14 @@ def generate_subject_time_series_plots(
 
     if subject_selection == 'ALL':
         ts_fig = add_figure_layers_by_subject(ts_fig, df)
+        
+        ts_fig.add_trace(
+            go.Scatter(x = df.query("SUBJECT == \'{}\'".format('BEEF'))['Year'], 
+                        y = df.query("SUBJECT == \'{}\'".format('BEEF'))['GDP Per Capita'],
+                        name = "GDP Per Capita",
+                        line=dict(color='royalblue', width=4, dash='dot')),
+            secondary_y=True,
+        )
     else:
         ts_fig.add_trace(
             go.Scattergl(x = df.query("SUBJECT == \'{}\'".format(subject_selection))['Year'], 
@@ -175,13 +179,13 @@ def generate_subject_time_series_plots(
             secondary_y=False,
         )
 
-    ts_fig.add_trace(
-        go.Scatter(x = df.query("SUBJECT == \'{}\'".format(subject_selection))['Year'], 
-                    y = df.query("SUBJECT == \'{}\'".format(subject_selection))['GDP Per Capita'],
-                    name = "GDP Per Capita",
-                    line=dict(color='royalblue', width=4, dash='dot')),
-        secondary_y=True,
-    )
+        ts_fig.add_trace(
+            go.Scatter(x = df.query("SUBJECT == \'{}\'".format(subject_selection))['Year'], 
+                        y = df.query("SUBJECT == \'{}\'".format(subject_selection))['GDP Per Capita'],
+                        name = "GDP Per Capita",
+                        line=dict(color='royalblue', width=4, dash='dot')),
+            secondary_y=True,
+        )
 
     # Add figure title
     ts_fig.update_layout(
